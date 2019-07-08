@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <!-- 关联的mapper接口的全限定类名 -->
+ <mapper namespace="com.cg.systemmanager.resource.dao.ResourceDao">
+ 	<!-- 开启二级缓存 -->
+ 	<cache/>
+ 	
+ 	<!-- 供公共查询的SQL语句 -->
+ 	<sql id="commentResource">
+ 		select 
+ 		 `resource_id`			as		`resourceId`
+ 		,`resource_name`		as		`resourceName`
+ 		,`resource_abbr`		as		`resourceAbbr`
+ 		,`parent_resource_id`	as		`parentResourceId`
+ 		,`parent_resource_name`	as		`parentResourceName`
+ 		,`resource_url`			as		`resourceUrl`
+ 		,`resource_type`		as		`resourceType`
+ 		,`resource_level`		as		`resourceLevel`
+ 		,`resource_no`			as		`resourceNo`
+ 		,`useable`				as		`useable`
+ 		,`description`			as		`description`
+ 		from t_resource
+ 	</sql>
+ 	
+ 	<!-- 添加资源 -->
+ 	<insert id="addResource" parameterType="resource">
+ 		insert t_resource(
+ 		 `resource_id`
+ 		,`resource_name`
+ 		,`resource_abbr`
+ 		,`parent_resource_id`
+ 		,`parent_resource_name`
+ 		,`resource_url`
+ 		,`resource_type`
+ 		,`resource_level`
+ 		,`resource_no`
+ 		,`useable`
+ 		,`description`
+ 		) value(
+ 		 #{resourceId}
+ 		,#{resourceName}
+ 		,#{resourceAbbr}
+ 		,#{parentResourceId}
+ 		,#{parentResourceName}
+ 		,#{resourceUrl}
+ 		,#{resourceType}
+ 		,#{resourceLevel}
+ 		,#{resourceNo}
+ 		,#{useable}
+ 		,#{description}
+  		)
+ 	</insert>
+ 	
+ 	<!-- 根据资源id删除资源 -->
+ 	<delete id="deleteResourceByResourceId" parameterType="string">
+ 		update t_resource 
+ 		set useable = 0
+ 		where `resource_id` = #{resourceId}
+ 	</delete>
+ 	
+ 	<!-- 根据条件修改资源 -->
+ 	<update id="updateResourceByCateria" parameterType="resource">
+ 				update t_resource
+ 		<set>
+ 			<if test="resourceName != null and resourceName != ''">
+ 				`resource_name`			=	#{resourceName},
+ 			</if>
+ 			<if test="resourceAbbr != null and resourceAbbr != ''">
+ 				`resource_abbr`			=	#{resourceAbbr},
+ 			</if>
+ 			<if test="parentResourceId != null and parentResourceId != ''">
+ 				`parent_resource_id`	=	#{parentResourceId},
+ 			</if>
+ 			<if test="parentResourceName != null and parentResourceName != ''">
+ 				`parent_resource_name`	=	#{parentResourceName},
+ 			</if>
+ 			<if test="resourceUrl != null and resourceUrl != ''">
+ 				`resource_url`			=	#{resourceUrl},
+ 			</if>
+ 			<if test="resourceType != null and resourceType != ''">
+ 				`resource_type`			=	#{resourceType},
+ 			</if>
+ 			<if test="resourceLevel != null and resourceLevel != ''">
+ 				`resource_level`		=	#{resourceLevel},
+ 			</if>
+ 			<if test="resourceNo != null and resourceNo != ''">
+ 				`resource_no`			=	#{resourceNo},
+ 			</if>
+ 			<if test="useable != null and useable != ''">
+ 				`useable`				=	#{useable},
+ 			</if>
+ 			<if test="description != null and description != ''">
+ 				`description`			=	#{description},
+ 			</if>
+ 		</set>
+ 				where `resource_id` = #{resourceId}
+ 	</update>
+ 	
+ 	<!-- 根据资源id查询资源信息 -->
+ 	<select id="findResourceByResourceId" parameterType="string" resultType="resource">
+ 		<include refid="commentResource"/>
+ 		where `resource_id` = #{resourceId} and useable = 1
+ 	</select>
+ 	
+ 	<!-- 根据资源名查询资源信息 -->
+ 	<select id="findResourceByResourceName" parameterType="string" resultType="resource">
+ 		<include refid="commentResource"/>
+ 		where `resource_name` = #{resourceName} and useable = 1
+ 	</select>
+ 	
+ 	<!-- 根据资源url查询资源信息 -->
+ 	<select id="findResourceByResourceUrl" parameterType="string" resultType="resource">
+ 		<include refid="commentResource"/>
+ 		where `resource_url` = #{resourceUrl} and useable = 1
+ 	</select>
+ 	
+ 	
+ 	<!-- 分页查询资源信息 -->
+ 	<select id="findPageResource" parameterType="hashmap" resultType="resource">
+ 		<include refid="commentResource"/>
+ 		where useable = 1
+ 		order by resource_no
+ 		limit #{pageIndex},#{pageSize}
+ 		
+ 	</select>
+ 	
+ 	<!-- 查询所有资源信息 -->
+ 	<select id="findAllResource" resultType="resource">
+ 		<include refid="commentResource"/>
+ 		where useable = 1
+ 		order by resource_no
+ 		
+ 	</select>
+ 	
+ 	<!-- 根据指定条件查询资源信息 -->
+ 	<select id="findResourceByCateria" parameterType="resource" resultType="resource">
+ 		<include refid="commentResource"/>
+ 		<where>
+ 			useable = 1
+ 			<if test="resourceAbbr != null and resourceAbbr != ''">
+ 				,`resource_abbr` 		=	#{resourceAbbr}
+ 			</if>
+ 			<if test="parentResourceId != null and parentResourceId != ''">
+ 				,`parent_resource_id`	=	#{parentResourceId}
+ 			</if>
+ 			<if test="parentResourceName != null and parentResourceName != ''">
+ 				,`parent_resource_name`	=	#{parentResourceName}
+ 			</if>
+ 			<if test="resourceType != null and resourceType != ''">
+ 				,`resource_type`		=	#{resourceType}
+ 			</if>
+ 			<if test="resourceLevel != null and resourceLevel != ''">
+ 				,`resource_level`		=	#{resourceLevel}
+ 			</if>
+ 			<if test="resourceNo != null and resourceNo != ''">
+ 				,`resource_no`			=	#{resourceNo}
+ 			</if>
+ 		</where>
+ 			order by resource_no
+ 	</select>
+ 	
+ </mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper 关联的pojo的全限定类型名 -->
+<mapper namespace="com.cg.base.fixedArea.dao.FixedAreaDao">
+  <select id="findAllFixedArea" resultType="FixedArea">
+  select * from t_fixed_area where userable = 0
+  </select>
+  <insert id="addFixedArea" parameterType="FixedArea">
+  INSERT into t_fixed_area  (fixed_area_id,fixed_area_name,master_id,master_name,userable,description) VALUES 
+  ( #{fixed_area_id}, #{fixed_area_name},
+  #{master_id}, #{master_name}, #{userable}, #{description})
+  </insert>
+  <update id="updateFixedArea" parameterType="FixedArea">
+  update  t_fixed_area set fixed_area_name =#{fixed_area_name} ,master_name= #{master_name}
+  ,userable=#{userable},description=#{description}
+   where fixed_area_id=#{fixed_area_id}
+  </update>
+   <select id="findFixedAreaById" resultType="FixedArea" parameterType="java.lang.String">
+  select * from t_fixed_area where  fixed_area_id=#{fixed_area_id}
+  </select>
+   <update id="deleteFixedArea" parameterType="String">
+  update  t_fixed_area set userable = 1 where  fixed_area_id=#{fixed_area_id}
+  </update>
+   <select id="findPartFixedArea" resultType="FixedArea" parameterType="java.lang.String">
+  select * from t_fixed_area where userable = 0 and fixed_area_name like "%${fixed_area_name}%"
+  </select>
+</mapper>
